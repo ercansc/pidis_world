@@ -27,16 +27,9 @@ public class GridTile : MonoBehaviour
 
     public GameObject ContainedObject;
 
-    private bool _blocked;
-
     public bool Blocked
     {
-        get { return _blocked; }
-        set
-        {
-            _blocked = value;
-            GetComponent<MeshRenderer>().material.color = Color.red;
-        }
+        get { return ContainedObject != null; }
     }
 
     private MeshRenderer _renderer;

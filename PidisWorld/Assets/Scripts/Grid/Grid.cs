@@ -36,8 +36,7 @@ public class Grid : MonoBehaviour
     [ContextMenu("BuildTheGrid")]
     public void InitNewGrid()
     {
-        if (transform.childCount > 1) throw new Exception("Please remove the old Grid first!");
-
+        RemoveGrid();
 
         Vector2 nullPosition = Vector2.zero;
         _thisGrid = new GridTile[SizeX, SizeY];
@@ -70,10 +69,21 @@ public class Grid : MonoBehaviour
     [ContextMenu("RemoveTheGrid")]
     private void RemoveGrid()
     {
-        for (int i = transform.childCount - 1; i >= 0; i--)
+        _gridList.Clear();
+        List<GameObject> liChildren = new List<GameObject>();
+        foreach (Transform child in transform)
         {
-            _gridList.Clear();
-            DestroyImmediate(transform.GetChild(i).gameObject);
+            if (child.gameObject.activeInHierarchy)
+            {
+                liChildren.Add(child.gameObject);
+            }
+        }
+        foreach (GameObject child in liChildren)
+        {
+            if (child.GetComponent<GridTile>())
+            {
+                DestroyImmediate(child);
+            }
         }
     }
 
