@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class ResourceCounter : MonoBehaviour
 {
-    [SerializeField] private string m_strToStringVariant;
     [SerializeField] private bool m_bValuePrefix = true;
     [SerializeField] private bool m_bClampToPositive = false;
     [SerializeField] private Color m_colPositive = Color.green;
@@ -33,7 +32,7 @@ public class ResourceCounter : MonoBehaviour
         {
             strValuePrefix = "+";
         }
-        string strValue = string.Format("{0}{1}", strValuePrefix, _iValue.ToString(m_strToStringVariant, PlayerResources.s_cultureInfo));
+        string strValue = string.Format("{0}{1}", strValuePrefix, _iValue.ToString("N0", PlayerResources.s_cultureInfo));
         m_txtCounter.text = strValue;
         m_txtCounter.color = _iValue >= 0 ? m_colPositive : m_colNegative;
     }
