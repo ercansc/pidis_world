@@ -5,6 +5,7 @@ using UnityEditor;
 
 public class GridDesignerEditor : EditorWindow
 {
+    public GridTile[,] MainGrid;
 
 
 
