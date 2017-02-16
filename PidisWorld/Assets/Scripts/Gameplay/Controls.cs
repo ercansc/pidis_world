@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum ControlState
 {
@@ -11,9 +12,15 @@ public enum ControlState
     Destroy,
 }
 
+public enum MoveState
+{
+    Idle,
+    Moving
+}
+
 public class Controls : MonoBehaviour
 {
-    private ControlState m_eControlState = ControlState.Idle;
+    private ControlState m_eControlState;
 
     public ControlState eControlState
     {
@@ -32,6 +39,8 @@ public class Controls : MonoBehaviour
 
     [SerializeField]
     private BuildingVisual m_placementVisual;
+
+    [SerializeField] private Text m_txtControlMode;
 
     public BuildingVisual PlacementVisual
     {
@@ -56,9 +65,12 @@ public class Controls : MonoBehaviour
     private GridTile m_currentBuildTile;
     private ShopItemData m_dataCurrent;
 
-    [Header("Move Mode")] [SerializeField] private LayerMask m_moveMask;
+    [Header("Move Mode")]
+    [SerializeField] private LayerMask m_moveMask;
 
+    private MoveState m_eMoveState = MoveState.Idle;
     private IngameBuilding m_buildingCurrent;
+    private GridTile m_tileBeginMove;
 
     private void Awake()
     {
@@ -92,10 +104,20 @@ public class Controls : MonoBehaviour
         }
     }
 
+    private void EnterState(ControlState _eState)
+    {
+        m_eControlState = _eState;
+        m_txtControlMode.text = _eState.ToString().ToUpper();
+        if (_eState == ControlState.Idle)
+        {
+            m_txtControlMode.text = "";
+        }
+    }
+
     private void EnterIdleMode()
     {
         m_placementVisual.gameObject.SetActive(false);
-        m_eControlState = ControlState.Idle;
+        EnterState(ControlState.Idle);
         m_dataCurrent = null;
         m_currentBuildTile = null;
         m_buildingCurrent = null;
@@ -115,6 +137,25 @@ public class Controls : MonoBehaviour
         return hit.collider != null;
     }
 
+    private GridTile HandleVisualPlacement(RaycastHit2D hit)
+    {
+        GridTile tile = null;
+        if (hit.transform != null)
+        { 
+            tile = hit.transform.gameObject.GetComponentInParent<GridTile>();
+            if (tile != null)
+            {
+                if (tile != m_currentBuildTile)
+                {
+                    m_placementVisual.OnEnterTile(tile);
+                }
+            }
+            m_currentBuildTile = tile;
+        }
+
+        return tile;
+    }
+
     #endregion
 
     #region Build Mode
@@ -122,7 +163,7 @@ public class Controls : MonoBehaviour
     public void EnterBuildMode(Building _eBuilding)
     {
         m_dataCurrent = ShopItemManager.Instance.GetBuildingData(_eBuilding);
-        m_eControlState = ControlState.Build;
+        EnterState(ControlState.Build);
         
         m_placementVisual.SetSprite(m_dataCurrent.Sprite);
         m_placementVisual.gameObject.SetActive(true);
@@ -138,15 +179,9 @@ public class Controls : MonoBehaviour
         RaycastHit2D hit;
         if(bRaycastHit(m_buildMask, out hit))
         {
-            GridTile tile = hit.transform.gameObject.GetComponentInParent<GridTile>();
-            if (tile != null)
+            HandleVisualPlacement(hit);
+            if (m_currentBuildTile != null)
             {
-                if (tile != m_currentBuildTile)
-                {
-                    m_currentBuildTile = tile;
-                    m_placementVisual.OnEnterTile(tile);
-                }
-
                 if (Input.GetMouseButtonDown(0))
                 {
                     if (bTryPlaceBuilding(m_currentBuildTile))
@@ -169,16 +204,29 @@ public class Controls : MonoBehaviour
         {
             return false;
         }
-        
-        PlaceBuilding(_tile);
+
+        IngameBuilding building = CreateBuilding();
+        PlaceBuilding(building, _tile);
+        BuyBuilding();
         return true;
     }
 
-    private void PlaceBuilding(GridTile _tile)
+    private IngameBuilding CreateBuilding()
     {
-        IngameBuilding building = Instantiate(ShopItemManager.Instance.ingameBuildingPrefab, _tile.transform.position, Quaternion.identity);
+        IngameBuilding building = Instantiate(ShopItemManager.Instance.ingameBuildingPrefab);
         building.Initialize(m_dataCurrent);
-        _tile.ContainedObject = building.gameObject;
+
+        return building;
+    }
+
+    private void PlaceBuilding(IngameBuilding _building, GridTile _tile)
+    {
+        _building.transform.position = _tile.transform.position;
+        _tile.ContainedObject = _building.gameObject;
+    }
+
+    private void BuyBuilding()
+    {
         PlayerResources.s_instance.AddCredits(-m_dataCurrent.iCost);
         PlayerResources.s_instance.AddWorkers(-m_dataCurrent.iWorkerCost);
     }
@@ -190,39 +238,34 @@ public class Controls : MonoBehaviour
     public void EnterMoveMode()
     {
         EnterIdleMode();
-        m_eControlState = ControlState.Move;
+        EnterState(ControlState.Move);
+        m_eMoveState = MoveState.Idle;
     }
 
     private void HandleMoveMode()
     {
-        RaycastHit2D hit;
-        
-        if (bRaycastHit(m_moveMask, out hit))
+        switch (m_eMoveState)
         {
-            IngameBuilding buildingHit = hit.transform.GetComponentInParent<IngameBuilding>();
-            if (buildingHit != m_buildingCurrent)
-            {
-                DeHighlightCurrentBuilding();
-                m_buildingCurrent = buildingHit;
-                m_buildingCurrent.Visual.Highlight(Colors.Instance.BuildingHighlighted);
-            }            
-        }
-        else if (m_buildingCurrent != null)
-        {
-            DeHighlightCurrentBuilding();
-            m_buildingCurrent = null;
+            case MoveState.Idle:
+                HandleMoveIdle();
+                break;
+            case MoveState.Moving:
+                HandleMoveMoving();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
         if (Input.GetMouseButtonDown(1))
         {
-            CancelMoveMode();
+            LeaveMoveMode();
         }
     }
 
-    private void CancelMoveMode()
+    private void LeaveMoveMode()
     {
         DeHighlightCurrentBuilding();
-        
+        m_eMoveState = MoveState.Idle;
         EnterIdleMode();
     }
 
@@ -233,6 +276,87 @@ public class Controls : MonoBehaviour
             m_buildingCurrent.Visual.Highlight(Colors.Instance.BuildingNormal);
         }
     }
+
+    #region Idle
+
+    private void HandleMoveIdle()
+    {
+        RaycastHit2D hit;
+
+        if (bRaycastHit(m_moveMask, out hit))
+        {
+            IngameBuilding buildingHit = hit.transform.GetComponentInParent<IngameBuilding>();
+            if (buildingHit != m_buildingCurrent)
+            {
+                DeHighlightCurrentBuilding();
+                m_buildingCurrent = buildingHit;
+                m_buildingCurrent.Visual.Highlight(Colors.Instance.BuildingHighlighted);
+            }
+
+            if (m_buildingCurrent != null)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    EnterMoveMoving();
+                }
+            }
+        }
+        else if (m_buildingCurrent != null)
+        {
+            DeHighlightCurrentBuilding();
+            m_buildingCurrent = null;
+        }
+    }
+
+    #endregion
+
+    #region Moving
+
+    private void MoveBuilding(IngameBuilding _building, GridTile _targetTile)
+    {
+        m_tileBeginMove.ContainedObject = null;
+        PlaceBuilding(m_buildingCurrent, _targetTile);
+    }
+
+    private void EnterMoveMoving()
+    {
+        RaycastHit2D hit = DoRaycast2D(m_buildMask);
+        GridTile tile = HandleVisualPlacement(hit);
+        m_placementVisual.SetSprite(m_buildingCurrent.Visual.Sprite);
+        m_tileBeginMove = tile;
+        m_eMoveState = MoveState.Moving;
+        m_placementVisual.gameObject.SetActive(true);
+    }
+
+    private void ConfirmMoving(GridTile _tile)
+    {
+        DeHighlightCurrentBuilding();
+        if (!_tile.Blocked)
+        {
+            MoveBuilding(m_buildingCurrent, _tile);
+            EnterMoveMode();
+        }
+        else
+        {
+            EnterMoveMode();
+        }
+    }
+
+    private void HandleMoveMoving()
+    {
+        RaycastHit2D hit = DoRaycast2D(m_buildMask);
+        GridTile tile = HandleVisualPlacement(hit);
+        if (Input.GetMouseButtonUp(0))
+        {
+            ConfirmMoving(tile);
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            LeaveMoveMode();
+        }
+    }
+
+    #endregion
 
     #endregion
 }
