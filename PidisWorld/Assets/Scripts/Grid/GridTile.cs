@@ -37,6 +37,11 @@ public class GridTile : MonoBehaviour
     void Start()
     {
         _renderer = GetComponent<MeshRenderer>();
+
+        if (transform.childCount > 0)
+        {
+            ContainedObject = transform.GetChild(0).gameObject;
+        }
     }
 
     public Grid GetGrid()

@@ -18,32 +18,37 @@ public class Grid : MonoBehaviour
     public uint SizeX;
     public uint SizeY;
     public GridTile TilePrefab;
-    private GridTile[,] _thisGrid;
+    public GridTile[,] ThisGrid { get; private set; }
     [HideInInspector]
-    public List<GridTile> _gridList;
+    public List<GridTile> GridList;
 
     public GridTile this[int x, int y]
     {
-        get { return _thisGrid[x, y]; }
-        set { _thisGrid[x, y] = value; }
+        get { return ThisGrid[x, y]; }
+        set { ThisGrid[x, y] = value; }
 
     }
 
     public GridTile this[Index i]
     {
-        get { return _thisGrid[i.x, i.y]; }
-        set { _thisGrid[i.x, i.y] = value; }
+        get { return ThisGrid[i.x, i.y]; }
+        set { ThisGrid[i.x, i.y] = value; }
     }
 
     public bool HasGrid
     {
         get
         {
-            if (_thisGrid == null) return false;
-            return _thisGrid.Length > 0;
+            if (ThisGrid == null) return false;
+            return transform.childCount > 1;
         }
     }
 
+    public void SetNewGrid(GridTile[,] newGrid)
+    {
+        ThisGrid = newGrid;
+        InitNewGrid();
+    }
 
     void Awake()
     {
@@ -57,8 +62,7 @@ public class Grid : MonoBehaviour
     {
         RemoveGrid();
 
-        Vector2 nullPosition = Vector2.zero;
-        _thisGrid = new GridTile[SizeX, SizeY];
+        ThisGrid = new GridTile[SizeX, SizeY];
 
         Vector2 currentPosition = new Vector2(0,0);
         Sprite sprite = TilePrefab.GetComponent<SpriteRenderer>().sprite;
@@ -74,8 +78,8 @@ public class Grid : MonoBehaviour
                 newTile.transform.SetParent(transform);
                 newTile.PositionIndex = new Index(x, y);
                 newTile.name = String.Format("GridTile_{0}_{1}", x, y);
-                _thisGrid[x, y] = newTile;
-                _gridList.Add(newTile);
+                ThisGrid[x, y] = newTile;
+                GridList.Add(newTile);
 
                 currentPosition.x += spriteWidth;
                 currentPosition.y -= spriteHeight;
@@ -88,7 +92,7 @@ public class Grid : MonoBehaviour
     [ContextMenu("RemoveTheGrid")]
     public void RemoveGrid()
     {
-        _gridList.Clear();
+        GridList.Clear();
         List<GameObject> liChildren = new List<GameObject>();
         foreach (Transform child in transform)
         {
@@ -104,21 +108,21 @@ public class Grid : MonoBehaviour
                 DestroyImmediate(child);
             }
         }
-        _thisGrid = new GridTile[0,0];
+        ThisGrid = new GridTile[0,0];
     }
 
     private void GridListToArray()
     {
-        if (_gridList.Count == (SizeX * SizeY))
+        if (GridList.Count == (SizeX * SizeY))
         {
             int i = 0;
-            _thisGrid = new GridTile[SizeX, SizeY];
+            ThisGrid = new GridTile[SizeX, SizeY];
 
             for (int y = 0; y < SizeY; y++)
             {
                 for (int x = 0; x < SizeX; x++)
                 {
-                    _thisGrid[x, y] = _gridList[i];
+                    ThisGrid[x, y] = GridList[i];
                     i++;
                 }
             }
