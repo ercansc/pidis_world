@@ -13,6 +13,7 @@ public class GridDesignerEditor : Editor
 {
     private GridObjectType _selectedGridObjectType;
     private Grid grid;
+    private int _selectedIntValue;
 
     public override void OnInspectorGUI()
     {
@@ -23,8 +24,17 @@ public class GridDesignerEditor : Editor
 
         if (grid.HasGrid)
         {
+            EditorGUILayout.BeginHorizontal();
+
             _selectedGridObjectType =
-                (GridObjectType) EditorGUILayout.Popup((int) _selectedGridObjectType, EnumHelper.GetObjectTypes());
+                (GridObjectType) EditorGUILayout.Popup((int) _selectedGridObjectType, EnumHelper.GetObjectTypes(), GUILayout.Width(250));
+
+            if (_selectedGridObjectType == GridObjectType.OilField)
+            {
+                _selectedIntValue = EditorGUILayout.IntField(_selectedIntValue);
+            }
+
+            EditorGUILayout.EndHorizontal();
 
             for (int x = 0; x < (int) grid.SizeX; x++)
             {
@@ -107,6 +117,13 @@ public class GridDesignerEditor : Editor
         go.name = _selectedGridObjectType.ToString();
         go.transform.position = grid[x, y].transform.position;
         go.transform.SetParent(grid[x, y].transform);
+
+        if (_selectedGridObjectType == GridObjectType.OilField)
+        {
+            OilField of = go.AddComponent<OilField>();
+            of.OilValue = _selectedIntValue;
+        }
+
         return go;
     }
 }
