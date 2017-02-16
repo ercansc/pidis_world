@@ -6,6 +6,11 @@ public class BuildingVisual : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer m_spriteRenderer;
 
+    public Sprite Sprite
+    {
+        get { return m_spriteRenderer.sprite; }
+    }
+
     public void SetSprite(Sprite _sprite)
     {
         m_spriteRenderer.sprite = _sprite;

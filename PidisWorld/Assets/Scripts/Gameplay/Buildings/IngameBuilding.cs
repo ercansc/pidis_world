@@ -15,11 +15,23 @@ public class IngameBuilding : MonoBehaviour
 
     public List<IngameBuilding> AdjacentBuildings;
 
+    private GridTile m_tile;
+
+    public GridTile Tile
+    {
+        get { return m_tile; }
+    }
+
     public void Initialize(ShopItemData _itemData)
     {
         m_itemData = _itemData;
         m_visual = Instantiate(ShopItemManager.Instance.buildingVisualPrefab, transform, false);
         m_visual.SetSprite(_itemData.Sprite);
+    }
+
+    public void SetTile(GridTile _tile)
+    {
+        m_tile = _tile;
     }
 
     void Update()
