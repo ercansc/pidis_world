@@ -8,6 +8,7 @@ public class Colors : ResourcableSingleton<Colors>
     [SerializeField] private Color m_colBuildingBlocked;
     [SerializeField] private Color m_colBuildingFree;
     [SerializeField] private Color m_colBuildingHighlighted;
+    [SerializeField] private Color m_colBuildingDestroy;
 
     public Color BuildingBlocked
     {
@@ -27,5 +28,10 @@ public class Colors : ResourcableSingleton<Colors>
     public Color BuildingNormal
     {
         get { return m_colBuildingNormal; }
+    }
+
+    public Color BuildingDestroy
+    {
+        get { return m_colBuildingDestroy; }
     }
 }

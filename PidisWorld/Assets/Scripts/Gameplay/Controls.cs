@@ -79,6 +79,7 @@ public class Controls : MonoBehaviour
     private GridTile m_tileBeginMove;
 
     [Header("Destroy Mode")] [SerializeField] private LayerMask m_destroyMask;
+    [SerializeField] private ConfirmDestroyMenu m_destroyMenu;
     private DestroyState m_eDestroyState = DestroyState.Idle;
 
     private void Awake()
@@ -114,18 +115,32 @@ public class Controls : MonoBehaviour
         }
     }
 
+    public static string TranslateState(ControlState _eState)
+    {
+        switch (_eState)
+        {
+            case ControlState.Idle:
+                return "";
+            case ControlState.Build:
+                return "Bauen";
+            case ControlState.Move:
+                return "Bewegen";
+            case ControlState.Destroy:
+                return "Zerstören";
+            default:
+                throw new ArgumentOutOfRangeException("_eState", _eState, null);
+        }
+    }
+
     private void EnterState(ControlState _eState)
     {
         m_eControlState = _eState;
-        m_txtControlMode.text = _eState.ToString().ToUpper();
-        if (_eState == ControlState.Idle)
-        {
-            m_txtControlMode.text = "";
-        }
+        m_txtControlMode.text = TranslateState(m_eControlState);
     }
 
     private void EnterIdleMode()
     {
+        DeHighlightCurrentBuilding();
         m_placementVisual.gameObject.SetActive(false);
         EnterState(ControlState.Idle);
         m_dataCurrent = null;
@@ -375,13 +390,91 @@ public class Controls : MonoBehaviour
 
     public void EnterDestroyMode()
     {
+        DeHighlightCurrentBuilding();
         EnterIdleMode();
         EnterState(ControlState.Destroy);
+        EnterDestroyIdle();
+    }
+
+    private void HandleDestroyIdle()
+    {
+        RaycastHit2D hit;
+        if (bRaycastHit(m_moveMask, out hit))
+        {
+            IngameBuilding buildingHit = hit.transform.GetComponentInParent<IngameBuilding>();
+            if (buildingHit != m_buildingCurrent)
+            {
+                DeHighlightCurrentBuilding();
+                m_buildingCurrent = buildingHit;
+                m_buildingCurrent.Visual.Highlight(Colors.Instance.BuildingDestroy);
+            }
+
+            if (m_buildingCurrent != null)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    EnterDestroyConfirm();
+                }
+            }
+        }
+        else
+        {
+            DeHighlightCurrentBuilding();
+            m_buildingCurrent = null;
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            EnterIdleMode();
+        }
+    }
+
+    private void ConfirmDestroyBuilding()
+    {
+        m_buildingCurrent.Tile.ContainedObject = null;
+        DeHighlightCurrentBuilding();
+        Destroy(m_buildingCurrent.gameObject);
+        m_buildingCurrent = null;
+        EnterDestroyIdle();
+    }
+
+    private void CancelDestroyBuilding()
+    {
+        DeHighlightCurrentBuilding();
+        m_buildingCurrent = null;
+        m_destroyMenu.gameObject.SetActive(false);
+        EnterDestroyMode();
+    }
+
+    private void EnterDestroyConfirm()
+    {
+        m_eDestroyState = DestroyState.Confirm;
+        m_destroyMenu.gameObject.SetActive(true);
+        m_destroyMenu.Initialize(m_buildingCurrent, ConfirmDestroyBuilding, CancelDestroyBuilding);
+    }
+
+    private void HandleDestroyConfirm()
+    {
+        
+    }
+
+    private void EnterDestroyIdle()
+    {
+        m_eDestroyState = DestroyState.Idle;
     }
 
     private void HandleDestroyMode()
     {
-        
+        switch (m_eDestroyState)
+        {
+            case DestroyState.Idle:
+                HandleDestroyIdle();
+                break;
+            case DestroyState.Confirm:
+                HandleDestroyConfirm();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     #endregion
