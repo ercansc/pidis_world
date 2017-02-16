@@ -4,14 +4,23 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+public enum GridObjectType
+{
+    Blocker,
+    OilField,
+    Rocket,
+    Empty,
+    Count //Needs to be last
+}
+
 public class Grid : MonoBehaviour
 {
     public uint SizeX;
     public uint SizeY;
     public GridTile TilePrefab;
     private GridTile[,] _thisGrid;
+    [HideInInspector]
     public List<GridTile> _gridList;
-
 
     public GridTile this[int x, int y]
     {
@@ -25,6 +34,16 @@ public class Grid : MonoBehaviour
         get { return _thisGrid[i.x, i.y]; }
         set { _thisGrid[i.x, i.y] = value; }
     }
+
+    public bool HasGrid
+    {
+        get
+        {
+            if (_thisGrid == null) return false;
+            return _thisGrid.Length > 0;
+        }
+    }
+
 
     void Awake()
     {
@@ -67,7 +86,7 @@ public class Grid : MonoBehaviour
     }
 
     [ContextMenu("RemoveTheGrid")]
-    private void RemoveGrid()
+    public void RemoveGrid()
     {
         _gridList.Clear();
         List<GameObject> liChildren = new List<GameObject>();
@@ -85,6 +104,7 @@ public class Grid : MonoBehaviour
                 DestroyImmediate(child);
             }
         }
+        _thisGrid = new GridTile[0,0];
     }
 
     private void GridListToArray()
