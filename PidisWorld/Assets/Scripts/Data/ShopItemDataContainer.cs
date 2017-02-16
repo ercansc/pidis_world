@@ -7,6 +7,22 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ShopItemDataContainer", menuName = "Buildings/Data Container")]
 public class ShopItemDataContainer : ScriptableObject
 {
+    [SerializeField]
+    private IngameBuilding p_ingameBuilding;
+
+    public IngameBuilding IngameBuilding
+    {
+        get { return p_ingameBuilding; }
+    }
+
+    [SerializeField]
+    private BuildingVisual p_buildingVisual;
+
+    public BuildingVisual BuildingVisual
+    {
+        get { return p_buildingVisual; }
+    }
+
     [SerializeField] private List<ShopItemData> m_liItemDatas;
 
     public List<ShopItemData> liItemDatas
@@ -54,17 +70,28 @@ public class ShopItemData
         }
     }
 
-    [SerializeField] private Sprite m_spriteShop;
+    [SerializeField] private int m_iWorkerCostPerLevel;
 
-    public Sprite spriteShop
+    public int iWorkerCostPerLevel
     {
-        get { return m_spriteShop; }
+        get
+        {
+            return m_iWorkerCostPerLevel;
+        }
     }
 
-    [SerializeField] private GameObject p_goPrefab;
-
-    public GameObject goPrefab
+    public int iWorkerCost
     {
-        get { return p_goPrefab; }
+        get
+        {
+            return m_iWorkerCostPerLevel * 1;
+        }
+    }
+
+    [SerializeField] private Sprite m_sprite;
+
+    public Sprite Sprite
+    {
+        get { return m_sprite; }
     }
 }
