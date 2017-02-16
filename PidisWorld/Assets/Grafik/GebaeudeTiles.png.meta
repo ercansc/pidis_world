@@ -1,12 +1,12 @@
 fileFormatVersion: 2
 guid: 025ed93a042eac54599f5a0b9d69508d
-timeCreated: 1487185675
+timeCreated: 1487246810
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: Rocket_Ingame
-    21300002: OilRefinery_Ingame
-    21300004: OilDrill_Ingame
+    21300002: Generator_Ingame
+    21300004: Refinery_Ingame
     21300006: Grass
     21300008: Oil
   serializedVersion: 4
@@ -88,7 +88,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: OilRefinery_Ingame
+      name: Generator_Ingame
       rect:
         serializedVersion: 2
         x: 228
@@ -101,7 +101,7 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: OilDrill_Ingame
+      name: Refinery_Ingame
       rect:
         serializedVersion: 2
         x: 468

@@ -16,6 +16,11 @@ public class BuildingPlacementVisual : MonoBehaviour
         m_spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    public void SetSprite(Sprite _sprite)
+    {
+        m_spriteRenderer.sprite = _sprite;
+    }
+
     public void OnEnterTile(GridTile _tile)
     {
             m_spriteRenderer.color = _tile.Blocked

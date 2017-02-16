@@ -28,27 +28,12 @@ public class Controls : MonoBehaviour
     [SerializeField]
     private LayerMask m_buildMask;
 
-    [SerializeField] private BuildingPlacementVisual m_placementVisualDrill;
+    [SerializeField]
+    private BuildingPlacementVisual m_placementVisual;
 
-    public BuildingPlacementVisual PlacementVisualDrill
+    public BuildingPlacementVisual PlacementVisual
     {
-        get
-        {
-            return m_placementVisualDrill;
-        }
-    }
-    [SerializeField] private BuildingPlacementVisual m_placementVisualRefinery;
-
-    private BuildingPlacementVisual m_placementVisualCurrent;
-
-    public BuildingPlacementVisual PlacementVisualCurrent
-    {
-        get { return m_placementVisualCurrent; }
-    }
-
-    public BuildingPlacementVisual PlacementVisualRefinery
-    {
-        get { return m_placementVisualRefinery; }
+        get { return m_placementVisual; }
     }
 
     public bool bBuildMode
@@ -57,7 +42,7 @@ public class Controls : MonoBehaviour
     }
 
     private GridTile m_currentBuildTile;
-    private BuildingData m_dataCurrent;
+    private ShopItemData m_dataCurrent;
 
     private void Awake()
     {
@@ -84,40 +69,19 @@ public class Controls : MonoBehaviour
 
     public void EnterBuildMode(Building _eBuilding)
     {
-        m_dataCurrent = BuildingManager.Instance.GetBuildingData(_eBuilding);
+        m_dataCurrent = ShopItemManager.Instance.GetBuildingData(_eBuilding);
         m_eControlState = ControlState.BuildMode;
-        if (m_placementVisualCurrent != null)
-        {
-            m_placementVisualCurrent.gameObject.SetActive(false);
-        }
-
-        switch (_eBuilding)
-        {
-            case Building.Drill:
-                m_placementVisualCurrent = PlacementVisualDrill;
-                break;
-            case Building.Refinery:
-                m_placementVisualCurrent = PlacementVisualRefinery;
-                break;
-            case Building.Rocket:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        if (m_placementVisualCurrent != null)
-        {
-            m_placementVisualCurrent.gameObject.SetActive(true);
-        }
+        
+        m_placementVisual.SetSprite(m_dataCurrent.spriteShop);
+        m_placementVisual.gameObject.SetActive(true);
     }
 
     private void ExitBuildMode()
     {
-        m_placementVisualCurrent.gameObject.SetActive(false);
+        m_placementVisual.gameObject.SetActive(false);
         m_eControlState = ControlState.Idle;
         m_dataCurrent = null;
         m_currentBuildTile = null;
-        m_placementVisualCurrent = null;
     }
 
     private void HandleBuildMode()
@@ -132,7 +96,7 @@ public class Controls : MonoBehaviour
                 if (tile != m_currentBuildTile)
                 {
                     m_currentBuildTile = tile;
-                    m_placementVisualCurrent.OnEnterTile(tile);
+                    m_placementVisual.OnEnterTile(tile);
                 }
 
                 if (Input.GetMouseButtonDown(0))
