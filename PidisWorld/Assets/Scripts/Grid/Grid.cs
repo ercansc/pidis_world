@@ -9,6 +9,7 @@ public enum GridObjectType
     Blocker,
     OilField,
     Rocket,
+    Empty,
     Count //Needs to be last
 }
 

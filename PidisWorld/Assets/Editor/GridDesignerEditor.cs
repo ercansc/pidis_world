@@ -46,6 +46,9 @@ public class GridDesignerEditor : Editor
                             case "Blocker":
                                 buttonString = "X";
                                 break;
+                            case "Empty":
+                                buttonString = "";
+                                break;
                             default:
                                 buttonString = "?";
                                 break;
@@ -54,13 +57,23 @@ public class GridDesignerEditor : Editor
 
                     if (GUILayout.Button(buttonString, GUILayout.Height(40), GUILayout.Width(40)))
                     {
-                        GameObject go =
-                            PrefabUtility.InstantiatePrefab(GridObjectsManager.Instance.GetObjectData().GridTypePrefabs[(int) _selectedGridObjectType]) as
-                                GameObject;
-                        go.name = _selectedGridObjectType.ToString();
-                        go.transform.position = grid[x, y].transform.position;
-                        go.transform.SetParent(grid[x, y].transform);
-                        grid[x, y].ContainedObject = go;
+                        if (grid[x, y].ContainedObject == null)
+                        {
+                            grid[x, y].ContainedObject = CreateNewObject(grid, x, y);
+                        }
+                        else
+                        {
+                            if (grid[x, y].ContainedObject.name.Equals(_selectedGridObjectType.ToString()) || grid[x, y].ContainedObject.name.Equals("Empty"))
+                            {
+                                DestroyImmediate(grid[x, y].transform.GetChild(0).gameObject);
+                                grid[x, y].ContainedObject = null;
+                            }
+                            else
+                            {
+                                DestroyImmediate(grid[x, y].transform.GetChild(0).gameObject);
+                                grid[x, y].ContainedObject = CreateNewObject(grid, x, y);
+                            }
+                        }
                     }
                 }
                 EditorGUILayout.EndHorizontal();
@@ -78,5 +91,18 @@ public class GridDesignerEditor : Editor
         {
             grid.RemoveGrid();
         }
+    }
+
+    private GameObject CreateNewObject(Grid grid, int x, int y)
+    {
+        if (_selectedGridObjectType.ToString().Equals("Empty")) return null;
+
+        GameObject go =
+            PrefabUtility.InstantiatePrefab(
+                GridObjectsManager.Instance.GetObjectData().GridTypePrefabs[(int) _selectedGridObjectType]) as GameObject;
+        go.name = _selectedGridObjectType.ToString();
+        go.transform.position = grid[x, y].transform.position;
+        go.transform.SetParent(grid[x, y].transform);
+        return go;
     }
 }
