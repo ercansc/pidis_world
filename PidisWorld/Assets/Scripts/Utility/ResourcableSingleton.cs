@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class ResourcableSingleton<T> : MonoBehaviour where T : MonoBehaviour
 {
 
@@ -81,7 +82,7 @@ public class ResourcableSingleton<T> : MonoBehaviour where T : MonoBehaviour
     #region UNITY METHODS
     public virtual void OnDestroy()
     {
-        s_bApplicationIsQuitting = true;
+        //s_bApplicationIsQuitting = true;
     }
     #endregion
 }

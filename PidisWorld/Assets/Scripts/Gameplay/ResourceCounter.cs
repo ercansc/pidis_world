@@ -9,8 +9,7 @@ public class ResourceCounter : MonoBehaviour
     [SerializeField] private bool m_bClampToPositive = false;
     [SerializeField] private Color m_colPositive = Color.green;
     [SerializeField] private Color m_colNegative = Color.red;
-
-    private Text m_txtCounter;
+    [SerializeField] private Text m_txtCounter;
 
     private void Awake()
     {
