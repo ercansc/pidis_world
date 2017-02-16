@@ -55,7 +55,7 @@ public class GridDesignerEditor : Editor
                     if (GUILayout.Button(buttonString, GUILayout.Height(40), GUILayout.Width(40)))
                     {
                         GameObject go =
-                            PrefabUtility.InstantiatePrefab(grid.GridTypePrefabs[(int) _selectedGridObjectType]) as
+                            PrefabUtility.InstantiatePrefab(GridObjectsManager.Instance.GetObjectData().GridTypePrefabs[(int) _selectedGridObjectType]) as
                                 GameObject;
                         go.name = _selectedGridObjectType.ToString();
                         go.transform.position = grid[x, y].transform.position;

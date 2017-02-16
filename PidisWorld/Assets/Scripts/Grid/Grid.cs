@@ -21,10 +21,6 @@ public class Grid : MonoBehaviour
     [HideInInspector]
     public List<GridTile> _gridList;
 
-    [Tooltip("Blocker, Oilfield, Rocket")]
-    public List<GameObject> GridTypePrefabs;
-
-
     public GridTile this[int x, int y]
     {
         get { return _thisGrid[x, y]; }
