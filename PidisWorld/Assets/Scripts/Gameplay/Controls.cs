@@ -122,12 +122,11 @@ public class Controls : MonoBehaviour
 
     private void HandleBuildMode()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, m_buildMask.value))
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero,
+            Mathf.Infinity, m_buildMask.value);
+        if (hit.collider != null)
         {
-            GameObject goHit = hit.collider.gameObject;
-            GridTile tile = goHit.GetComponentInParent<GridTile>();
+            GridTile tile = hit.transform.gameObject.GetComponentInParent<GridTile>();
             if (tile != null)
             {
                 if (tile != m_currentBuildTile)
@@ -143,11 +142,12 @@ public class Controls : MonoBehaviour
                         ExitBuildMode();
                     }
                 }
-                else if (Input.GetMouseButtonDown(1))
-                {
-                    ExitBuildMode();
-                }
             }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            ExitBuildMode();
         }
     }
 
