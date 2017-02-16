@@ -18,6 +18,12 @@ public enum MoveState
     Moving
 }
 
+public enum DestroyState
+{
+    Idle,
+    Confirm
+}
+
 public class Controls : MonoBehaviour
 {
     private ControlState m_eControlState;
@@ -72,6 +78,9 @@ public class Controls : MonoBehaviour
     private IngameBuilding m_buildingCurrent;
     private GridTile m_tileBeginMove;
 
+    [Header("Destroy Mode")] [SerializeField] private LayerMask m_destroyMask;
+    private DestroyState m_eDestroyState = DestroyState.Idle;
+
     private void Awake()
     {
         if (s_instance != null)
@@ -98,6 +107,7 @@ public class Controls : MonoBehaviour
                 HandleMoveMode();
                 break;
             case ControlState.Destroy:
+                HandleDestroyMode();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -222,6 +232,7 @@ public class Controls : MonoBehaviour
     private void PlaceBuilding(IngameBuilding _building, GridTile _tile)
     {
         _building.transform.position = _tile.transform.position;
+        _building.SetTile(_tile);
         _tile.ContainedObject = _building.gameObject;
     }
 
@@ -357,6 +368,21 @@ public class Controls : MonoBehaviour
     }
 
     #endregion
+
+    #endregion
+
+    #region Destroy Mode
+
+    public void EnterDestroyMode()
+    {
+        EnterIdleMode();
+        EnterState(ControlState.Destroy);
+    }
+
+    private void HandleDestroyMode()
+    {
+        
+    }
 
     #endregion
 }
