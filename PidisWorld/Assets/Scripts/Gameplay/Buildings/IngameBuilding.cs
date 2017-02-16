@@ -14,6 +14,7 @@ public class IngameBuilding : MonoBehaviour
     public ShopItemData m_itemData { get; private set; }
 
     public List<IngameBuilding> AdjacentBuildings;
+    public int GeneratedEnergy;
 
     private GridTile m_tile;
 
@@ -59,7 +60,10 @@ public class IngameBuilding : MonoBehaviour
 
     private void RefineryUpdate()
     {
-        
+        if (m_tile.ContainedObject.GetComponent<OilField>() != null)
+        {
+            GeneratedEnergy = m_tile.ContainedObject.GetComponent<OilField>().OilValue;
+        }
     }
 
     private void GeneratorUpdate()
