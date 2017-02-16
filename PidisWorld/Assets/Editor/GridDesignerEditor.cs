@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using UnityEngine;
 using UnityEditor;
@@ -11,17 +12,19 @@ using UnityEditorInternal;
 public class GridDesignerEditor : Editor
 {
     private GridObjectType _selectedGridObjectType;
+    private Grid grid;
 
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
         EditorGUILayout.Space();
 
-        Grid grid = (Grid) target;
+        grid = (Grid) target;
 
         if (grid.HasGrid)
         {
-            _selectedGridObjectType = (GridObjectType) EditorGUILayout.Popup((int)_selectedGridObjectType, EnumHelper.GetObjectTypes());
+            _selectedGridObjectType =
+                (GridObjectType) EditorGUILayout.Popup((int) _selectedGridObjectType, EnumHelper.GetObjectTypes());
 
             for (int x = 0; x < (int) grid.SizeX; x++)
             {
@@ -63,7 +66,8 @@ public class GridDesignerEditor : Editor
                         }
                         else
                         {
-                            if (grid[x, y].ContainedObject.name.Equals(_selectedGridObjectType.ToString()) || grid[x, y].ContainedObject.name.Equals("Empty"))
+                            if (grid[x, y].ContainedObject.name.Equals(_selectedGridObjectType.ToString()) ||
+                                grid[x, y].ContainedObject.name.Equals("Empty"))
                             {
                                 DestroyImmediate(grid[x, y].transform.GetChild(0).gameObject);
                                 grid[x, y].ContainedObject = null;
@@ -81,9 +85,9 @@ public class GridDesignerEditor : Editor
         }
 
         EditorGUILayout.Space();
-        if (GUILayout.Button("Create Grid", GUILayout.Height(40), GUILayout.Width(200)))
+        if (GUILayout.Button("Create New Grid", GUILayout.Height(40), GUILayout.Width(200)))
         {
-            grid.InitNewGrid();
+            grid.SetNewGrid(grid.ThisGrid);
         }
 
         if (!grid.HasGrid) return;
