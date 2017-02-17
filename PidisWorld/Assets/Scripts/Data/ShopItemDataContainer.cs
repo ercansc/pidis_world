@@ -44,6 +44,7 @@ public class ShopItemData
     public Building eType
     {
         get { return m_eType; }
+        set { m_eType = value; }
     }
 
     [SerializeField] private int m_iCost;

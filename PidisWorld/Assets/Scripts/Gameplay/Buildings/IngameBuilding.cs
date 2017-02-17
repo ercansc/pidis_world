@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 
 public class IngameBuilding : MonoBehaviour
@@ -11,12 +13,24 @@ public class IngameBuilding : MonoBehaviour
     {
         get { return m_visual; }
     }
-    public ShopItemData m_itemData { get; private set; }
+    public ShopItemData m_itemData { get; protected set; }
 
-    public List<IngameBuilding> AdjacentBuildings;
-    public int GeneratedEnergy;
 
-    private GridTile m_tile;
+    private int _generatedEnergy;
+    public int GeneratedEnergy
+    {
+        get
+        {
+            if (_generatedEnergy == 0)
+            {
+                CalculateEnergyOfBuilding();
+            }
+            return _generatedEnergy;
+        }
+        set { _generatedEnergy = value; }
+    }
+
+    protected GridTile m_tile;
 
     public GridTile Tile
     {
@@ -35,46 +49,89 @@ public class IngameBuilding : MonoBehaviour
         m_tile = _tile;
     }
 
+    
+
     void Update()
     {
-        switch (m_itemData.eType)
-        {
-            case Building.Refinery:
-                RefineryUpdate();
-                break;
-            case Building.Generator:
-                GeneratorUpdate();
-                break;
-            case Building.Pipeline:
-                break;
-            case Building.Wire:
-                break;
-            case Building.Rocket:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
+        if(m_itemData.eType == Building.Rocket)
+            Debug.Log(String.Format("The rocket has {0} Energy", GetEnergyOfAllConnected()));
     }
 
-
-    private void RefineryUpdate()
+    public List<IngameBuilding> GetAdjacentBuildings()
     {
-        if (m_tile.ContainedObject.GetComponent<OilField>() != null)
-        {
-            GeneratedEnergy = m_tile.ContainedObject.GetComponent<OilField>().OilValue;
-        }
-    }
+        List<IngameBuilding> adjacentBuildings = new List<IngameBuilding>();
+        Index positionIndex = m_tile.PositionIndex;
 
-    private void GeneratorUpdate()
-    {
-        foreach (IngameBuilding building in AdjacentBuildings)
+
+        foreach (GridTile adjacentTile in m_tile.GetAdjacentTiles())
         {
-            if (building.m_itemData.eType == Building.Refinery)
+            //Abbruchbedingungen
+            if (adjacentTile.ContainedObject == null) continue;
+            if (adjacentTile.ContainedObject.GetComponent<IngameBuilding>() == null) continue;
+
+            IngameBuilding building = adjacentTile.ContainedObject.GetComponent<IngameBuilding>();
+            if (!adjacentBuildings.Contains(building))
             {
-                
+                adjacentBuildings.Add(building);
             }
         }
+
+        return adjacentBuildings;
     }
+
+    public int GetEnergyOfAllConnected()
+    {
+        List<IngameBuilding> buildingsInSystem = GetAdjacentBuildings();
+
+        while (HasAdjBuildingsLeft(buildingsInSystem))
+        {
+            List<IngameBuilding> tempList = new List<IngameBuilding>();
+            foreach (IngameBuilding building in buildingsInSystem)
+            {
+                foreach (IngameBuilding adjacentBuilding in building.GetAdjacentBuildings())
+                {
+                    if (!buildingsInSystem.Contains(adjacentBuilding)) tempList.Add(adjacentBuilding);
+                }
+            }
+            buildingsInSystem.AddRange(tempList);
+        }
+
+        if (HasRefineryInSystem(buildingsInSystem))
+        {
+            return buildingsInSystem.Sum(b => b.GeneratedEnergy);
+        }
+        return 0;
+    }
+
+    private bool HasRefineryInSystem(List<IngameBuilding> systemList)
+    {
+        return systemList.Any(building => building.m_itemData.eType == Building.Refinery);
+    }
+
+    private bool HasAdjBuildingsLeft(List<IngameBuilding> excludeList)
+    {
+        foreach (IngameBuilding building in excludeList)
+        {
+            foreach (IngameBuilding adjacentBuilding in building.GetAdjacentBuildings())
+            {
+                if (!excludeList.Contains(adjacentBuilding)) return true;
+            }
+        }
+        return false;
+    }
+
+    private void CalculateEnergyOfBuilding()
+    {
+        if (m_tile.ContainedObject.GetComponent<OilField>() != null && m_itemData.eType == Building.Refinery)
+        {
+            _generatedEnergy = m_tile.ContainedObject.GetComponent<OilField>().OilValue;
+        }
+        else if (m_itemData.eType == Building.Generator)
+        {
+            _generatedEnergy = m_itemData.iWorkerCost;
+        }
+    }
+
+
 
 }

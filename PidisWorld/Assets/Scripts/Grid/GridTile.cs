@@ -49,6 +49,38 @@ public class GridTile : MonoBehaviour
         return transform.parent.GetComponent<Grid>();
     }
 
+    public List<GridTile> GetAdjacentTiles()
+    {
+        Grid grid = GetGrid();
+        List<GridTile> tempGridTiles = new List<GridTile>();
+
+        Index index = new Index(PositionIndex.x - 1, PositionIndex.y);
+        if (!OutOfArrayBounds(index))
+        {
+            tempGridTiles.Add(grid[index]);
+        }
+
+        index = new Index(PositionIndex.x + 1, PositionIndex.y);
+        if (!OutOfArrayBounds(index))
+        {
+            tempGridTiles.Add(grid[index]);
+        }
+
+        index = new Index(PositionIndex.x, PositionIndex.y - 1);
+        if (!OutOfArrayBounds(index))
+        {
+            tempGridTiles.Add(grid[index]);
+        }
+
+        index = new Index(PositionIndex.x, PositionIndex.y + 1);
+        if (!OutOfArrayBounds(index))
+        {
+            tempGridTiles.Add(grid[index]);
+        }
+
+        return tempGridTiles;
+    }
+
     public void SetObject(GameObject obj)
     {
         ContainedObject = obj;
@@ -64,5 +96,9 @@ public class GridTile : MonoBehaviour
         _renderer.material.color = color;
     }
 
-
+    private bool OutOfArrayBounds(Index position)
+    {
+        return position.x < 0 || position.x > GetGrid().ThisGrid.GetLength(0) - 1 ||
+               position.y < 0 || position.y > GetGrid().ThisGrid.GetLength(1) - 1;
+    }
 }
