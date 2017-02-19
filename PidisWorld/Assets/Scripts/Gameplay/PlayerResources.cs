@@ -126,6 +126,11 @@ public class PlayerResources : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void GoToLevelSelection()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     public void Quit()
     {
 #if UNITY_EDITOR
