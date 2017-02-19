@@ -21,11 +21,11 @@ public class BuildingVisual : MonoBehaviour
         m_spriteRenderer.color = _color;
     }
 
-    public void OnEnterTile(GridTile _tile)
+    public void OnEnterTile(bool _bCanBePlaced, GridTile _tile)
     {
-            m_spriteRenderer.color = _tile.Blocked
-                ? Colors.Instance.BuildingBlocked
-                : Colors.Instance.BuildingFree;
+            m_spriteRenderer.color =_bCanBePlaced
+                ? Colors.Instance.BuildingFree
+                : Colors.Instance.BuildingBlocked;
 
             transform.position = _tile.transform.position;
     }

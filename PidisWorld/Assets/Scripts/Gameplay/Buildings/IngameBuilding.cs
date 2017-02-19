@@ -49,8 +49,6 @@ public class IngameBuilding : MonoBehaviour
         m_tile = _tile;
     }
 
-    
-
     void Update()
     {
         if(m_itemData.eType == Building.Rocket)
@@ -131,7 +129,4 @@ public class IngameBuilding : MonoBehaviour
             _generatedEnergy = m_itemData.iWorkerCost;
         }
     }
-
-
-
 }

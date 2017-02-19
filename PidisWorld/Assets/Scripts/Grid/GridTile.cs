@@ -44,6 +44,11 @@ public class GridTile : MonoBehaviour
         }
     }
 
+    public bool bIsOilField()
+    {
+        return ContainedObject != null && ContainedObject.CompareTag("OilField");
+    }
+
     public Grid GetGrid()
     {
         return transform.parent.GetComponent<Grid>();

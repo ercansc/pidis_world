@@ -172,7 +172,8 @@ public class Controls : MonoBehaviour
             {
                 if (tile != m_currentBuildTile)
                 {
-                    m_placementVisual.OnEnterTile(tile);
+                    bool bCanBePlaced = bCanPlaceBuilding(m_dataCurrent.eType, tile);
+                    m_placementVisual.OnEnterTile(bCanBePlaced, tile);
                 }
             }
             m_currentBuildTile = tile;
@@ -223,9 +224,28 @@ public class Controls : MonoBehaviour
         }
     }
 
+    private bool bCanPlaceBuilding(Building _eType, GridTile _targetTile)
+    {
+        switch (_eType)
+        {
+            case Building.Refinery:
+                return _targetTile.bIsOilField();
+            case Building.Generator:
+                return !_targetTile.Blocked;
+            case Building.Pipeline:
+                return !_targetTile.Blocked;
+            case Building.Wire:
+                return !_targetTile.Blocked;
+            case Building.Rocket:
+                return !_targetTile.Blocked;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
     private bool bTryPlaceBuilding(GridTile _tile)
     {
-        if (_tile.Blocked)
+        if (!bCanPlaceBuilding(m_dataCurrent.eType, _tile))
         {
             return false;
         }
