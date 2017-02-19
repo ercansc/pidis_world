@@ -37,6 +37,13 @@ public class IngameBuilding : MonoBehaviour
         get { return m_tile; }
     }
 
+    protected Tooltip m_tooltip;
+
+    protected virtual void Start()
+    {
+        InitTooltip();
+    }
+
     public void Initialize(ShopItemData _itemData)
     {
         m_itemData = _itemData;
@@ -46,15 +53,17 @@ public class IngameBuilding : MonoBehaviour
         _audioSource.PlayOneShot(m_itemData.PlacementSfx);
     }
 
+    protected virtual void InitTooltip()
+    {
+        if (m_itemData.eType == Building.Generator)
+        {
+            m_tooltip = PlayerResources.s_instance.CreateTooltip(Tooltip.Type.Worker, transform, m_itemData.iWorkerCost);
+        }
+    }
+
     public void SetTile(GridTile _tile)
     {
         m_tile = _tile;
-    }
-
-    void Update()
-    {
-        if(m_itemData.eType == Building.Rocket)
-            Debug.Log(String.Format("The rocket has {0} Energy", GetEnergyOfAllConnected()));
     }
 
     public List<IngameBuilding> GetAdjacentBuildings()
@@ -149,6 +158,19 @@ public class IngameBuilding : MonoBehaviour
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
+        }
+
+        if (m_tooltip != null)
+        {
+            Destroy(m_tooltip.gameObject);
+        }
+    }
+
+    public void OnMoveBuilding()
+    {
+        if (m_tooltip != null)
+        {
+            m_tooltip.UpdatePosition();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
@@ -14,6 +15,15 @@ public class PlayerResources : MonoBehaviour
 
     [SerializeField] private ResourceCounter m_resourceCredits;
     [SerializeField] private ResourceCounter m_resourceWorkers;
+
+    [SerializeField] private Tooltip p_tooltipSimple;
+    [SerializeField]
+    private Tooltip p_tooltipGoal;
+    [SerializeField] private Sprite m_spriteOil;
+    [SerializeField]
+    private Sprite m_spriteWorker;
+    [SerializeField]
+    private Sprite m_spriteEnergy;
 
     private int m_iCredits;
     private int m_iWorkers;
@@ -55,5 +65,42 @@ public class PlayerResources : MonoBehaviour
     {
         m_iWorkers += _iValue;
         m_resourceWorkers.SetValue(m_iWorkers);
+    }
+
+    public Tooltip CreateTooltip(Tooltip.Type _eType, Transform _target, int _iValue)
+    {
+        Tooltip tooltipPrefab = null;
+        Sprite sprite = null;
+        switch (_eType)
+        {
+            case Tooltip.Type.Oil:
+                tooltipPrefab = p_tooltipSimple;
+                sprite = m_spriteOil;
+                break;
+            case Tooltip.Type.Worker:
+                tooltipPrefab = p_tooltipSimple;
+                sprite = m_spriteWorker;
+                break;
+            case Tooltip.Type.Energy:
+                tooltipPrefab = p_tooltipGoal;
+                sprite = m_spriteEnergy;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException("_eType", _eType, null);
+        }
+
+        Tooltip newTooltip = Instantiate(tooltipPrefab, transform, false);
+        newTooltip.transform.SetAsFirstSibling();
+        newTooltip.Initialize(_target, sprite, _iValue);
+
+        return newTooltip;
+    }
+
+    public Tooltip CreateTooltip(Tooltip.Type _eType, Transform _target, int _iValue, int _iOptionalValue)
+    {
+        Tooltip newTooltip = CreateTooltip(_eType, _target, _iValue);
+        newTooltip.UpdateOptionalValue(_iOptionalValue);
+
+        return newTooltip;
     }
 }

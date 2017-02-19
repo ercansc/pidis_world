@@ -389,6 +389,7 @@ public class Controls : MonoBehaviour
         if (bCanPlaceBuilding(m_buildingCurrent.m_itemData.eType, _tile))
         {
             MoveBuilding(m_buildingCurrent, _tile);
+            m_buildingCurrent.OnMoveBuilding();
             EnterMoveMode();
         }
         else
