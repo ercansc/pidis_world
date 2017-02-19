@@ -61,6 +61,16 @@ public class IngameBuilding : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        foreach (IngameBuilding adjacentBuilding in GetAdjacentBuildings())
+        {
+            PlayerResources.s_instance.CreateMathSign(
+                adjacentBuilding.m_itemData.eType == Building.Rocket ? MathSigns.Equal : MathSigns.Add, this,
+                adjacentBuilding);
+        }
+    }
+
     public void SetTile(GridTile _tile)
     {
         m_tile = _tile;
