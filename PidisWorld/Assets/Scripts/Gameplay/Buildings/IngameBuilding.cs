@@ -131,9 +131,9 @@ public class IngameBuilding : MonoBehaviour
 
     private void CalculateEnergyOfBuilding()
     {
-        if (m_tile.ContainedObject.GetComponent<OilField>() != null && m_itemData.eType == Building.Refinery)
+        if (m_itemData.eType == Building.Refinery)
         {
-            _generatedEnergy = m_tile.ContainedObject.GetComponent<OilField>().OilValue;
+            _generatedEnergy = m_tile.GetComponentInChildren<OilField>().OilValue;
         }
         else if (m_itemData.eType == Building.Generator)
         {
