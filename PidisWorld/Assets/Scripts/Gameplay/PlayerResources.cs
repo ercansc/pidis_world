@@ -42,6 +42,20 @@ public class PlayerResources : MonoBehaviour
     [Header("Math Signs")] [SerializeField] private MathSign p_mathSign;
 
     private int m_iCredits;
+
+    public int iCredits
+    {
+        get
+        {
+            return m_iCredits;
+        }
+    }
+
+    public int iWorkers
+    {
+        get { return m_iWorkers; }
+    }
+
     private int m_iWorkers;
 
     private void Awake()
