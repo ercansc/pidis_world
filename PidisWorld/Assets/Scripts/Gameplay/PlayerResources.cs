@@ -207,13 +207,19 @@ public class PlayerResources : MonoBehaviour
         }
         else
         {
+            bool hasPair = false;
             for (int i = MathSignPairs.Count-1; i >= 0; i--)
             {
                 IngameBuildingPair buildingPair = MathSignPairs[i];
-                if (!buildingPair.HasPair(a, b))
+                if (buildingPair.HasPair(a, b))
                 {
-                    MathSignPairs.Add(new IngameBuildingPair(a, b));
+                    hasPair = true;
+                    break;
                 }
+            }
+            if (!hasPair)
+            {
+                MathSignPairs.Add(new IngameBuildingPair(a, b));
             }
         }
         ReDrawAllMathSigns();
