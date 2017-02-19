@@ -175,9 +175,9 @@ public class PlayerResources : MonoBehaviour
 
     public void ToggleTooltips(bool _bActive)
     {
-        foreach (Tooltip tooltip in Tooltip.s_liTooltips)
+        foreach (GameObject goTooltip in Tooltip.s_liTooltips)
         {
-            tooltip.gameObject.SetActive(_bActive);
+            goTooltip.gameObject.SetActive(_bActive);
         }
     }
 

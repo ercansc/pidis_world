@@ -18,11 +18,11 @@ public class Tooltip : MonoBehaviour
 
     private Transform m_target;
 
-    public static List<Tooltip> s_liTooltips = new List<Tooltip>();
+    public static List<GameObject> s_liTooltips = new List<GameObject>();
 
     public void Initialize(Transform _target, Sprite _sprite, int _iValue)
     {
-        s_liTooltips.Add(this);
+        s_liTooltips.Add(gameObject);
         m_target = _target;
         m_imgIcon.sprite = _sprite;
         UpdateValue(_iValue);
@@ -51,6 +51,6 @@ public class Tooltip : MonoBehaviour
 
     private void OnDestroy()
     {
-        s_liTooltips.Remove(this);
+        s_liTooltips.Remove(gameObject);
     }
 }

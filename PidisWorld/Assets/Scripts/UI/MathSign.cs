@@ -13,6 +13,11 @@ public class MathSign : MonoBehaviour
     [SerializeField]
     private Sprite m_spriteEquals;
 
+    private void Start()
+    {
+        Tooltip.s_liTooltips.Add(gameObject);
+    }
+
     public void Initialize(MathSigns _eType)
     {
         switch (_eType)
@@ -32,5 +37,10 @@ public class MathSign : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException("_eType", _eType, null);
         }
+    }
+
+    private void OnDestroy()
+    {
+        Tooltip.s_liTooltips.Remove(gameObject);
     }
 }
