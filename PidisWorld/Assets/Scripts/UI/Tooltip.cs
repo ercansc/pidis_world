@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class Tooltip : MonoBehaviour
@@ -17,8 +18,11 @@ public class Tooltip : MonoBehaviour
 
     private Transform m_target;
 
+    public static List<Tooltip> s_liTooltips = new List<Tooltip>();
+
     public void Initialize(Transform _target, Sprite _sprite, int _iValue)
     {
+        s_liTooltips.Add(this);
         m_target = _target;
         m_imgIcon.sprite = _sprite;
         UpdateValue(_iValue);
@@ -43,5 +47,10 @@ public class Tooltip : MonoBehaviour
     public void UpdateOptionalValue(int _iValue)
     {
         m_txtOptionalValue.text = string.Format("/ {0}", _iValue);
+    }
+
+    private void OnDestroy()
+    {
+        s_liTooltips.Remove(this);
     }
 }

@@ -103,4 +103,12 @@ public class PlayerResources : MonoBehaviour
 
         return newTooltip;
     }
+
+    public void ToggleTooltips(bool _bActive)
+    {
+        foreach (Tooltip tooltip in Tooltip.s_liTooltips)
+        {
+            tooltip.gameObject.SetActive(_bActive);
+        }
+    }
 }
