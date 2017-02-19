@@ -172,7 +172,16 @@ public class Controls : MonoBehaviour
             {
                 if (tile != m_currentBuildTile)
                 {
-                    bool bCanBePlaced = bCanPlaceBuilding(m_dataCurrent.eType, tile);
+                    Building eBuildingType = Building.Refinery;
+                    if (m_dataCurrent != null)
+                    {
+                        eBuildingType = m_dataCurrent.eType;
+                    }
+                    else if (m_buildingCurrent != null)
+                    {
+                        eBuildingType = m_buildingCurrent.m_itemData.eType;
+                    }
+                    bool bCanBePlaced = bCanPlaceBuilding(eBuildingType, tile);
                     m_placementVisual.OnEnterTile(bCanBePlaced, tile);
                 }
             }
@@ -377,7 +386,7 @@ public class Controls : MonoBehaviour
     private void ConfirmMoving(GridTile _tile)
     {
         DeHighlightCurrentBuilding();
-        if (!_tile.Blocked)
+        if (bCanPlaceBuilding(m_buildingCurrent.m_itemData.eType, _tile))
         {
             MoveBuilding(m_buildingCurrent, _tile);
             EnterMoveMode();
