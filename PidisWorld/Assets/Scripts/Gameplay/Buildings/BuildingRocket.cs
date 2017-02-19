@@ -10,12 +10,16 @@ public class BuildingRocket : IngameBuilding
 
     private bool m_bFinished = false;
 
+    void Awake()
+    {
+        m_tile = transform.parent.GetComponent<GridTile>();
+    }
+
     protected override void Start()
     {
         base.Start();
         m_itemData = new ShopItemData();
         m_itemData.eType = Building.Rocket;
-        m_tile = transform.parent.GetComponent<GridTile>();
         GetComponentInChildren<SpriteRenderer>().sortingOrder = 1;
     }
 

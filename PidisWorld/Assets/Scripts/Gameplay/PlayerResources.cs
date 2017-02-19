@@ -40,9 +40,27 @@ public class PlayerResources : MonoBehaviour
     private Sprite m_spriteEnergy;
 
     [Header("Math Signs")] [SerializeField] private MathSign p_mathSign;
+    private List<MathSign> _drawnMathSigns;
+    private List<IngameBuildingPair> _mathSignPairs;
+    public List<IngameBuildingPair> MathSignPairs
+    {
+        get
+        {
+            return _mathSignPairs;
+        }
+
+        set
+        {
+            //DeleteAllMathSigns();
+            _mathSignPairs = value;
+            //DrawAllMathSigns();
+        }
+    }
 
     private int m_iCredits;
     private int m_iWorkers;
+
+
 
     private void Awake()
     {
@@ -69,6 +87,8 @@ public class PlayerResources : MonoBehaviour
         m_resourceCredits.SetValue(m_iCredits);
         m_iWorkers = m_iStartWorkers;
         m_resourceWorkers.SetValue(m_iWorkers);
+        _mathSignPairs = new List<IngameBuildingPair>();
+        _drawnMathSigns = new List<MathSign>();
     }
 
     public void AddCredits(int _iValue)
@@ -164,5 +184,45 @@ public class PlayerResources : MonoBehaviour
         sign.Initialize(_eType);
 
         return sign;
+    }
+
+    public void AddMathSignBuildingPair(IngameBuilding a, IngameBuilding b)
+    {
+        if (MathSignPairs.Count == 0)
+        {
+            MathSignPairs.Add(new IngameBuildingPair(a, b));
+        }
+        else
+        {
+            for (int i = MathSignPairs.Count-1; i >= 0; i--)
+            {
+                IngameBuildingPair buildingPair = MathSignPairs[i];
+                if (!buildingPair.HasPair(a, b))
+                {
+                    MathSignPairs.Add(new IngameBuildingPair(a, b));
+                }
+            }
+        }
+        DrawAllMathSigns();
+    }
+
+    private void DrawAllMathSigns()
+    {
+        DeleteAllMathSigns();
+        _drawnMathSigns = new List<MathSign>();
+        foreach (IngameBuildingPair buildingPair in MathSignPairs)
+        {
+            _drawnMathSigns.Add(
+                s_instance.CreateMathSign(buildingPair.HasRocket() ? MathSigns.Equal : MathSigns.Add, buildingPair.BuildingA, buildingPair.BuildingB));
+        }
+    }
+
+    private void DeleteAllMathSigns()
+    {
+        if (_drawnMathSigns.Count == 0) return;
+        foreach (MathSign sign in _drawnMathSigns)
+        {
+            Destroy(sign.gameObject);
+        }
     }
 }

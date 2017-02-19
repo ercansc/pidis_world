@@ -5,6 +5,36 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 
+public class IngameBuildingPair
+{
+    public IngameBuilding BuildingA;
+    public IngameBuilding BuildingB;
+
+    public IngameBuildingPair(IngameBuilding buildingA, IngameBuilding buildingB)
+    {
+        BuildingA = buildingA;
+        BuildingB = buildingB;
+    }
+
+    public bool HasPair(IngameBuilding a, IngameBuilding b)
+    {
+        if (BuildingA == a || BuildingA == b)
+        {
+            if (BuildingB == a || BuildingB == b)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool HasRocket()
+    {
+        return BuildingA.m_itemData.eType == Building.Rocket || BuildingB.m_itemData.eType == Building.Rocket;
+    }
+
+}
+
 public class IngameBuilding : MonoBehaviour
 {
     private BuildingVisual m_visual;
@@ -42,6 +72,10 @@ public class IngameBuilding : MonoBehaviour
     protected virtual void Start()
     {
         InitTooltip();
+        foreach (IngameBuilding building in GetAdjacentBuildings())
+        {
+            PlayerResources.s_instance.AddMathSignBuildingPair(this, building);
+        }
     }
 
     public void Initialize(ShopItemData _itemData)
@@ -61,15 +95,6 @@ public class IngameBuilding : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        foreach (IngameBuilding adjacentBuilding in GetAdjacentBuildings())
-        {
-            PlayerResources.s_instance.CreateMathSign(
-                adjacentBuilding.m_itemData.eType == Building.Rocket ? MathSigns.Equal : MathSigns.Add, this,
-                adjacentBuilding);
-        }
-    }
 
     public void SetTile(GridTile _tile)
     {
