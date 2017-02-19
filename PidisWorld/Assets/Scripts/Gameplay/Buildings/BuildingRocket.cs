@@ -19,7 +19,14 @@ public class BuildingRocket : IngameBuilding
 
     private void Update()
     {
-        Debug.Log(String.Format("The rocket has {0} Energy", GetEnergyOfAllConnected()));
+        int energyInSystem = GetEnergyOfAllConnected();
+        m_tooltip.UpdateValue(energyInSystem);
+
+        if (energyInSystem == m_iGoalEnergy)
+        {
+            Debug.Log("Level Finished!");
+        }
+
     }
 
     protected override void InitTooltip()
