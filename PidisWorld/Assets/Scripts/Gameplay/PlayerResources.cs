@@ -217,10 +217,10 @@ public class PlayerResources : MonoBehaviour
                 }
             }
         }
-        DrawAllMathSigns();
+        ReDrawAllMathSigns();
     }
 
-    private void DrawAllMathSigns()
+    public void ReDrawAllMathSigns()
     {
         DeleteAllMathSigns();
         _drawnMathSigns = new List<MathSign>();
