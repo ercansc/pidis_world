@@ -8,6 +8,8 @@ public class BuildingRocket : IngameBuilding
 
     private int m_iCurrentEnergy;
 
+    private bool m_bFinished = false;
+
     protected override void Start()
     {
         base.Start();
@@ -22,9 +24,10 @@ public class BuildingRocket : IngameBuilding
         int energyInSystem = GetEnergyOfAllConnected();
         m_tooltip.UpdateValue(energyInSystem);
 
-        if (energyInSystem == m_iGoalEnergy)
+        if (energyInSystem == m_iGoalEnergy && !m_bFinished)
         {
-            Debug.Log("Level Finished!");
+            m_bFinished = true;
+            PlayerResources.s_instance.ShowFinishedWindow();
         }
 
     }

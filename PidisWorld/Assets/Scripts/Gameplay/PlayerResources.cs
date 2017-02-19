@@ -2,8 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+public enum MathSigns
+{
+    Add,
+    Substract,
+    Divide,
+    Multiply,
+    Equal
+}
 
 public class PlayerResources : MonoBehaviour
 {
@@ -16,6 +27,9 @@ public class PlayerResources : MonoBehaviour
     [SerializeField] private ResourceCounter m_resourceCredits;
     [SerializeField] private ResourceCounter m_resourceWorkers;
 
+    [SerializeField] private GameObject m_goFinishedWindow;
+
+    [Header("Tooltips")]
     [SerializeField] private Tooltip p_tooltipSimple;
     [SerializeField]
     private Tooltip p_tooltipGoal;
@@ -24,6 +38,8 @@ public class PlayerResources : MonoBehaviour
     private Sprite m_spriteWorker;
     [SerializeField]
     private Sprite m_spriteEnergy;
+
+    [Header("Math Signs")] [SerializeField] private MathSign p_mathSign;
 
     private int m_iCredits;
     private int m_iWorkers;
@@ -65,6 +81,25 @@ public class PlayerResources : MonoBehaviour
     {
         m_iWorkers += _iValue;
         m_resourceWorkers.SetValue(m_iWorkers);
+    }
+
+    public void ShowFinishedWindow()
+    {
+        m_goFinishedWindow.SetActive(true);
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void Quit()
+    {
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#elif UNITY_STANDALONE
+        Application.Quit();
+#endif
     }
 
     public Tooltip CreateTooltip(Tooltip.Type _eType, Transform _target, int _iValue)
@@ -110,5 +145,24 @@ public class PlayerResources : MonoBehaviour
         {
             tooltip.gameObject.SetActive(_bActive);
         }
+    }
+
+    public MathSign CreateMathSign(MathSigns _eType, IngameBuilding _buildingA, IngameBuilding _buildingB)
+    {
+        Vector3 v3PosA = _buildingA.transform.position;
+        Vector3 v3PosB = _buildingB.transform.position;
+        Vector3 v3DirAB = v3PosB - v3PosA;
+        Vector3 v3PosMidAB = v3PosA + v3DirAB*.5f;
+
+        Vector3 v3TargetWorldPos = v3PosMidAB;
+        Vector2 v2TargetViewportPos = Camera.main.WorldToViewportPoint(v3TargetWorldPos);
+        Vector2 v2CanvasSize = GetComponent<RectTransform>().sizeDelta;
+        Vector2 v2TargetGuiPos = new Vector2(v2CanvasSize.x * v2TargetViewportPos.x, v2CanvasSize.y * v2TargetViewportPos.y);
+
+        MathSign sign = Instantiate(p_mathSign, transform, false);
+        sign.GetComponent<RectTransform>().anchoredPosition = v2TargetGuiPos;
+        sign.Initialize(_eType);
+
+        return sign;
     }
 }
