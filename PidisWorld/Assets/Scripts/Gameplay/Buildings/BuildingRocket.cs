@@ -9,6 +9,6 @@ public class BuildingRocket : IngameBuilding {
 	    m_itemData = new ShopItemData();	
         m_itemData.eType = Building.Rocket;
         m_tile = transform.parent.GetComponent<GridTile>();
-        GetComponentInChildren<SpriteRenderer>().sortingOrder = 10;
+        GetComponentInChildren<SpriteRenderer>().sortingOrder = 1;
     }
 }
