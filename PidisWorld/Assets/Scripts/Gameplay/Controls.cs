@@ -459,6 +459,7 @@ public class Controls : MonoBehaviour
 
     private void ConfirmDestroyBuilding()
     {
+        m_buildingCurrent.OnDestroyBuilding();
         m_buildingCurrent.Tile.ContainedObject = null;
         DeHighlightCurrentBuilding();
         Destroy(m_buildingCurrent.gameObject);

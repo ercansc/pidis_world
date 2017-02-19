@@ -131,4 +131,24 @@ public class IngameBuilding : MonoBehaviour
             _generatedEnergy = m_itemData.iWorkerCost;
         }
     }
+
+    public void OnDestroyBuilding()
+    {
+        switch (m_itemData.eType)
+        {
+            case Building.Refinery:
+                break;
+            case Building.Generator:
+                PlayerResources.s_instance.AddWorkers(m_itemData.iWorkerCost);
+                break;
+            case Building.Pipeline:
+                break;
+            case Building.Wire:
+                break;
+            case Building.Rocket:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
 }
