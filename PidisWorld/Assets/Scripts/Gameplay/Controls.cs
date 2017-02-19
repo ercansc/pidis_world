@@ -259,6 +259,11 @@ public class Controls : MonoBehaviour
             return false;
         }
 
+        if (!bCanBuyBuilding(m_dataCurrent.iWorkerCost))
+        {
+            return false;
+        }
+
         IngameBuilding building = CreateBuilding();
         PlaceBuilding(building, _tile);
         BuyBuilding();
@@ -278,6 +283,11 @@ public class Controls : MonoBehaviour
         _building.transform.position = _tile.transform.position;
         _building.SetTile(_tile);
         _tile.ContainedObject = _building.gameObject;
+    }
+
+    private bool bCanBuyBuilding(int _iWorkerCost)
+    {
+        return PlayerResources.s_instance.iWorkers >= _iWorkerCost;
     }
 
     private void BuyBuilding()

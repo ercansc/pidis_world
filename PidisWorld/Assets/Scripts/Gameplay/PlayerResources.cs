@@ -58,6 +58,20 @@ public class PlayerResources : MonoBehaviour
     }
 
     private int m_iCredits;
+
+    public int iCredits
+    {
+        get
+        {
+            return m_iCredits;
+        }
+    }
+
+    public int iWorkers
+    {
+        get { return m_iWorkers; }
+    }
+
     private int m_iWorkers;
 
 
