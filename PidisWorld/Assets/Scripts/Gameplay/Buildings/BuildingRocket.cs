@@ -7,6 +7,7 @@ public class BuildingRocket : IngameBuilding
     private int m_iGoalEnergy;
 
     private int m_iCurrentEnergy;
+    private int _energyInSystem;
 
     private bool m_bFinished = false;
 
@@ -23,21 +24,25 @@ public class BuildingRocket : IngameBuilding
         m_itemData = new ShopItemData();
         m_itemData.eType = Building.Rocket;
         GetComponentInChildren<SpriteRenderer>().sortingOrder = 1;
+        PlayerResources.s_instance.Rocket = this;
     }
 
     private void Update()
     {
-        int energyInSystem = GetEnergyOfAllConnected();
-        m_tooltip.UpdateValue(energyInSystem);
+        m_tooltip.UpdateValue(_energyInSystem);
 
-        if (energyInSystem == m_iGoalEnergy && !m_bFinished)
+        if (_energyInSystem == m_iGoalEnergy && !m_bFinished)
         {
             m_bFinished = true;
             AudioSource audio = gameObject.AddComponent<AudioSource>();
             audio.PlayOneShot(m_successClip);
             PlayerResources.s_instance.ShowFinishedWindow();
         }
+    }
 
+    public void UpdateEnergyInSystem()
+    {
+        _energyInSystem = GetEnergyOfAllConnected();
     }
 
     protected override void InitTooltip()

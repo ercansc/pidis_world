@@ -90,6 +90,17 @@ public class IngameBuilding : MonoBehaviour
         m_visual.SetSprite(_itemData.Sprite);
         _audioSource = GetComponent<AudioSource>();
         _audioSource.PlayOneShot(m_itemData.PlacementSfx);
+        StartCoroutine(LateStart(1));
+    }
+
+    private IEnumerator LateStart(float frames)
+    {
+        for (int i = 0; i < frames; i++)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+        PlayerResources.s_instance.Rocket.UpdateEnergyInSystem();
     }
 
     protected virtual void InitTooltip()
@@ -207,10 +218,13 @@ public class IngameBuilding : MonoBehaviour
             Destroy(m_tooltip.gameObject);
         }
         PlayerResources.s_instance.ReDrawAllMathSigns();
+        PlayerResources.s_instance.Rocket.UpdateEnergyInSystem();
+
     }
 
     public void OnMoveBuilding()
     {
+        PlayerResources.s_instance.Rocket.UpdateEnergyInSystem();
         if (m_tooltip != null)
         {
             PlayerResources.s_instance.RemoveMathSignBuilding(this);

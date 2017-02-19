@@ -72,6 +72,7 @@ public class PlayerResources : MonoBehaviour
 
     private int m_iWorkers;
 
+    public BuildingRocket Rocket;
 
 
     private void Awake()
