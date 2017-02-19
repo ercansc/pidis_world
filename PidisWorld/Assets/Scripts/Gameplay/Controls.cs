@@ -386,7 +386,7 @@ public class Controls : MonoBehaviour
     private void ConfirmMoving(GridTile _tile)
     {
         DeHighlightCurrentBuilding();
-        if (bCanPlaceBuilding(m_buildingCurrent.m_itemData.eType, _tile))
+        if (_tile != null && bCanPlaceBuilding(m_buildingCurrent.m_itemData.eType, _tile))
         {
             MoveBuilding(m_buildingCurrent, _tile);
             m_buildingCurrent.OnMoveBuilding();
