@@ -10,6 +10,8 @@ public class BuildingRocket : IngameBuilding
 
     private bool m_bFinished = false;
 
+    [SerializeField] private AudioClip m_successClip;
+
     void Awake()
     {
         m_tile = transform.parent.GetComponent<GridTile>();
@@ -31,6 +33,8 @@ public class BuildingRocket : IngameBuilding
         if (energyInSystem == m_iGoalEnergy && !m_bFinished)
         {
             m_bFinished = true;
+            AudioSource audio = gameObject.AddComponent<AudioSource>();
+            audio.PlayOneShot(m_successClip);
             PlayerResources.s_instance.ShowFinishedWindow();
         }
 
