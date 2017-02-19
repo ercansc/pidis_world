@@ -14,7 +14,7 @@ public class IngameBuilding : MonoBehaviour
         get { return m_visual; }
     }
     public ShopItemData m_itemData { get; protected set; }
-
+    private AudioSource _audioSource;
 
     private int _generatedEnergy;
     public int GeneratedEnergy
@@ -42,6 +42,8 @@ public class IngameBuilding : MonoBehaviour
         m_itemData = _itemData;
         m_visual = Instantiate(ShopItemManager.Instance.buildingVisualPrefab, transform, false);
         m_visual.SetSprite(_itemData.Sprite);
+        _audioSource = GetComponent<AudioSource>();
+        _audioSource.PlayOneShot(m_itemData.PlacementSfx);
     }
 
     public void SetTile(GridTile _tile)

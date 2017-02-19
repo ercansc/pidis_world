@@ -95,4 +95,12 @@ public class ShopItemData
     {
         get { return m_sprite; }
     }
+
+    [SerializeField]
+    private AudioClip m_placementSfx;
+
+    public AudioClip PlacementSfx
+    {
+        get { return m_placementSfx; }
+    }
 }
