@@ -72,6 +72,11 @@ public class IngameBuilding : MonoBehaviour
     protected virtual void Start()
     {
         InitTooltip();
+        UpdateMathSigns();
+    }
+
+    private void UpdateMathSigns()
+    {
         foreach (IngameBuilding building in GetAdjacentBuildings())
         {
             PlayerResources.s_instance.AddMathSignBuildingPair(this, building);
@@ -178,6 +183,8 @@ public class IngameBuilding : MonoBehaviour
 
     public void OnDestroyBuilding()
     {
+        PlayerResources.s_instance.RemoveMathSignBuilding(this);
+
         switch (m_itemData.eType)
         {
             case Building.Refinery:
@@ -199,13 +206,17 @@ public class IngameBuilding : MonoBehaviour
         {
             Destroy(m_tooltip.gameObject);
         }
+        PlayerResources.s_instance.ReDrawAllMathSigns();
     }
 
     public void OnMoveBuilding()
     {
         if (m_tooltip != null)
         {
+            PlayerResources.s_instance.RemoveMathSignBuilding(this);
             m_tooltip.UpdatePosition();
+            UpdateMathSigns();
+            PlayerResources.s_instance.ReDrawAllMathSigns();
         }
     }
 }

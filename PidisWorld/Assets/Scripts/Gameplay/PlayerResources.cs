@@ -51,9 +51,7 @@ public class PlayerResources : MonoBehaviour
 
         set
         {
-            //DeleteAllMathSigns();
             _mathSignPairs = value;
-            //DrawAllMathSigns();
         }
     }
 
@@ -229,6 +227,30 @@ public class PlayerResources : MonoBehaviour
         {
             _drawnMathSigns.Add(
                 s_instance.CreateMathSign(buildingPair.HasRocket() ? MathSigns.Equal : MathSigns.Add, buildingPair.BuildingA, buildingPair.BuildingB));
+        }
+    }
+
+    public void RemoveMathSignBuilding(IngameBuilding building)
+    {
+        for (int i = MathSignPairs.Count - 1; i >= 0; i--)
+        {
+            IngameBuildingPair buildingPair = MathSignPairs[i];
+            if (buildingPair.BuildingA == building ||buildingPair.BuildingB == building)
+            {
+                MathSignPairs.RemoveAt(i);
+            }
+        }
+    }
+
+    public void RemoveMathSignBuildingPair(IngameBuilding a, IngameBuilding b)
+    {
+        for (int i = MathSignPairs.Count - 1; i >= 0; i--)
+        {
+            IngameBuildingPair buildingPair = MathSignPairs[i];
+            if (buildingPair.HasPair(a, b))
+            {
+                MathSignPairs.RemoveAt(i);
+            }
         }
     }
 
