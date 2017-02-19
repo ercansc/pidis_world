@@ -195,6 +195,7 @@ public class PlayerResources : MonoBehaviour
 
         MathSign sign = Instantiate(p_mathSign, transform, false);
         sign.GetComponent<RectTransform>().anchoredPosition = v2TargetGuiPos;
+        sign.transform.SetAsFirstSibling();
         sign.Initialize(_eType);
 
         return sign;

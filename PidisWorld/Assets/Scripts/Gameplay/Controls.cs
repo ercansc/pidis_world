@@ -399,6 +399,7 @@ public class Controls : MonoBehaviour
         if (_tile != null && bCanPlaceBuilding(m_buildingCurrent.m_itemData.eType, _tile))
         {
             MoveBuilding(m_buildingCurrent, _tile);
+            PlayerResources.s_instance.ReDrawAllMathSigns();
             m_buildingCurrent.OnMoveBuilding();
             EnterMoveMode();
         }
