@@ -127,7 +127,7 @@ public class PlayerResources : MonoBehaviour
 
     public void GoToLevelSelection()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("Levelauswahl");
     }
 
     public void Quit()
