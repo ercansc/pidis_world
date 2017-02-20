@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine;
 
 public enum GridObjectType
@@ -73,7 +73,7 @@ public class Grid : MonoBehaviour
         {
             for (int x = 0; x < SizeX; x++)
             {
-                GridTile newTile = (GridTile)PrefabUtility.InstantiatePrefab(TilePrefab);
+                GridTile newTile = Instantiate(TilePrefab);
                 newTile.transform.position = new Vector2(currentPosition.x, currentPosition.y);
                 newTile.transform.SetParent(transform);
                 newTile.PositionIndex = new Index(x, y);

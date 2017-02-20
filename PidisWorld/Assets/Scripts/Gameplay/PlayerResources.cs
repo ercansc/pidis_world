@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -133,11 +132,7 @@ public class PlayerResources : MonoBehaviour
 
     public void Quit()
     {
-#if UNITY_EDITOR
-        EditorApplication.isPlaying = false;
-#elif UNITY_STANDALONE
         Application.Quit();
-#endif
     }
 
     public Tooltip CreateTooltip(Tooltip.Type _eType, Transform _target, int _iValue)
